@@ -34,6 +34,12 @@ mixin ToolsState on FitCore {
 
   void goTools() => pushRoute('tools');
 
+  String? veoInitialImagePath;
+  void goVeoAnimate([String? imagePath]) {
+    veoInitialImagePath = imagePath;
+    pushRoute('veo-animate');
+  }
+
   void openTool(String id) {
     activeToolId = id;
     pushRoute('tools-detail');

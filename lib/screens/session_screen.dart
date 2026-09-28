@@ -123,13 +123,19 @@ class SessionScreen extends StatelessWidget {
                   locked,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: _rowPad),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Expanded(child: _dashedAction(gc, t.addSet, () => fit.addSet(exIdx))),
-                        if (second != null) ...[
-                          const SizedBox(width: 8),
-                          Expanded(child: second),
-                        ],
+                        Row(
+                          children: [
+                            Expanded(child: _dashedAction(gc, t.addSet, () => fit.addSet(exIdx))),
+                            if (second != null) ...[
+                              const SizedBox(width: 8),
+                              Expanded(child: second),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        _restTriggerBar(context, gc, ex, exIdx),
                       ],
                     ),
                   ),
@@ -1041,18 +1047,220 @@ class SessionScreen extends StatelessWidget {
 
   Widget _restCard(GymColors gc, WorkoutSession s) {
     final count = fit.sessionSetCount;
-    return TimerPanel(
-      label: t.liveResting,
-      remaining: s.restRemaining ?? 0,
-      total: fit.restTotal,
-      elapsed: fit.elapsedLabel,
-      elapsedLabel: t.elapsedCaps,
-      sets: '${count.done}/${count.total}',
-      setsLabel: t.setsCaps,
-      hint: t.tapToSkip,
-      onTap: fit.skipRest,
-      onMinus: () => fit.nudgeRest(-15),
-      onPlus: () => fit.nudgeRest(15),
+    final isPaused = fit.isRestPaused;
+    return Column(
+      children: [
+        TimerPanel(
+          label: isPaused ? 'REST PAUSED' : t.liveResting,
+          remaining: s.restRemaining ?? 0,
+          total: fit.restTotal,
+          elapsed: fit.elapsedLabel,
+          elapsedLabel: t.elapsedCaps,
+          sets: '${count.done}/${count.total}',
+          setsLabel: t.setsCaps,
+          hint: t.tapToSkip,
+          color: isPaused ? gc.brass : gc.sage,
+          onTap: fit.skipRest,
+          onMinus: () => fit.nudgeRest(-15),
+          onPlus: () => fit.nudgeRest(15),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Pill(
+              label: isPaused ? 'Resume Rest' : 'Pause Rest',
+              bg: gc.bgRaised2,
+              fg: isPaused ? gc.sage : gc.textSecondary,
+              onTap: fit.togglePauseRest,
+            ),
+            const SizedBox(width: 8),
+            Pill(
+              label: '+30s',
+              bg: gc.bgRaised2,
+              fg: gc.textSecondary,
+              onTap: () => fit.nudgeRest(30),
+            ),
+            const SizedBox(width: 8),
+            Pill(
+              label: 'Skip Rest',
+              bg: gc.bgRaised2,
+              fg: gc.textTertiary,
+              onTap: fit.skipRest,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _restTriggerBar(BuildContext context, GymColors gc, SessionExercise? ex, int exIdx) {
+    final s = fit.session;
+    final isResting = s?.restRemaining != null;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: gc.bgRaised2.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isResting ? gc.sage.withValues(alpha: 0.5) : gc.border.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isResting ? PhosphorIconsFill.hourglassHigh : PhosphorIconsRegular.timer,
+                size: 16,
+                color: isResting ? gc.sage : gc.ember,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  isResting
+                      ? 'REST COUNTDOWN ACTIVE: ${clockLabel(s?.restRemaining ?? 0)}'
+                      : 'REST TIMER BETWEEN SETS',
+                  style: AppTheme.f(11, weight: FontWeight.w800, color: isResting ? gc.sage : gc.textSecondary, letterSpacing: 0.8),
+                ),
+              ),
+              if (isResting)
+                GestureDetector(
+                  onTap: fit.skipRest,
+                  child: Text(
+                    'Skip Rest',
+                    style: AppTheme.f(11.5, weight: FontWeight.w700, color: gc.accent),
+                  ),
+                )
+              else
+                GestureDetector(
+                  onTap: () => _pickCustomRest(context),
+                  child: Row(
+                    children: [
+                      Icon(PhosphorIconsRegular.slidersHorizontal, size: 13, color: gc.textTertiary),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Custom',
+                        style: AppTheme.f(11.5, weight: FontWeight.w600, color: gc.textTertiary),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _restChip(gc, '30s', 30),
+                const SizedBox(width: 6),
+                _restChip(gc, '45s', 45),
+                const SizedBox(width: 6),
+                _restChip(gc, '60s', 60),
+                const SizedBox(width: 6),
+                _restChip(gc, '90s', 90),
+                const SizedBox(width: 6),
+                _restChip(gc, '2 min', 120),
+                const SizedBox(width: 6),
+                _restChip(gc, '3 min', 180),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _restChip(GymColors gc, String label, int seconds) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        fit.startRest(seconds);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: gc.bgRaised,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: gc.border),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(PhosphorIconsRegular.play, size: 10, color: gc.ember),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: AppTheme.f(11.5, weight: FontWeight.w700, color: gc.text),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _pickCustomRest(BuildContext context) {
+    showAppSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheet) {
+        final gc = sheet.gc;
+        return Container(
+          padding: sheetPad(sheet),
+          decoration: BoxDecoration(
+            color: gc.bgRaised,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SheetHandle(),
+              const SizedBox(height: 18),
+              Text(
+                'Start Rest Countdown',
+                style: AppTheme.f(19, weight: FontWeight.w800, color: gc.text),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Trigger countdown timer between sets',
+                style: AppTheme.f(13, weight: FontWeight.w500, color: gc.textSecondary),
+              ),
+              const SizedBox(height: 18),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  for (final sec in [15, 30, 45, 60, 75, 90, 105, 120, 150, 180, 240, 300])
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(sheet).pop();
+                        HapticFeedback.mediumImpact();
+                        fit.startRest(sec);
+                      },
+                      child: Container(
+                        width: 72,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: gc.bgRaised2,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: gc.border),
+                        ),
+                        child: Text(
+                          clockLabel(sec),
+                          style: AppTheme.f(13.5, weight: FontWeight.w700, color: gc.text),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
     );
   }
 

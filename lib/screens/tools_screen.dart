@@ -38,7 +38,71 @@ class ToolsScreen extends StatelessWidget {
               titleSize: 22,
               subtitle: t.calculatorsCount(kToolMeta.length),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 18),
+            GestureDetector(
+              onTap: () => fit.goVeoAnimate(),
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [gc.bgRaised, gc.bgRaised2],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: gc.ember.withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: gc.ember.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(PhosphorIconsFill.videoCamera, size: 24, color: gc.ember),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Animate with Veo',
+                              style: AppTheme.f(15.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: gc.ember,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text('NEW', style: AppTheme.f(9.5, weight: FontWeight.w900, color: gc.onEmber)),
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Generate AI fitness videos from photos (16:9 & 9:16) with Veo 3.1 Fast',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'CALCULATORS',
+              style: AppTheme.f(11.5, weight: FontWeight.w700, color: gc.textSecondary, letterSpacing: 1.5),
+            ),
+            const SizedBox(height: 10),
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,

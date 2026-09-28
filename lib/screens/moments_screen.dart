@@ -102,6 +102,12 @@ class _MomentsScreenState extends State<MomentsScreen> {
                 ),
                 const SizedBox(width: 8),
                 RoundAction(
+                  onTap: () => fit.goVeoAnimate(),
+                  label: 'Animate with Veo',
+                  child: Icon(PhosphorIconsFill.videoCamera, size: 17, color: context.gc.ember),
+                ),
+                const SizedBox(width: 8),
+                RoundAction(
                   onTap: _add,
                   label: t.snapNow,
                   child: Icon(PhosphorIconsRegular.camera, size: 17, color: context.gc.text),
@@ -292,13 +298,32 @@ class _PhotoView extends StatelessWidget {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 54,
+                  bottom: 36,
                   child: Opacity(
                     opacity: v,
-                    child: Text(
-                      t.fullDate(moment.date),
-                      textAlign: TextAlign.center,
-                      style: AppTheme.f(13, weight: FontWeight.w600, color: gc.textSecondary),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          t.fullDate(moment.date),
+                          textAlign: TextAlign.center,
+                          style: AppTheme.f(13, weight: FontWeight.w600, color: gc.textSecondary),
+                        ),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Pill(
+                            label: 'Animate with Veo 3.1',
+                            bg: gc.ember,
+                            fg: gc.onEmber,
+                            hPad: 14,
+                            vPad: 8,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              fit.goVeoAnimate(path);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

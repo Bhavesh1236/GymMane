@@ -201,6 +201,59 @@ class _RoutineEditScreenState extends State<RoutineEditScreen> {
             ),
           ),
         ]),
+        if (routine.name.isEmpty) ...[
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                for (final preset in const ['Push Day', 'Pull Day', 'Leg Day', 'Full Body', 'Upper Body', 'Core & HIIT'])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Pill(
+                      label: preset,
+                      bg: gc.bgRaised2,
+                      fg: gc.textSecondary,
+                      fontSize: 11.5,
+                      hPad: 10,
+                      vPad: 5,
+                      onTap: () {
+                        _name.text = preset;
+                        fit.renameRoutine(_id, preset);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: gc.bgRaised,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: gc.border),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _routineStat(gc, '${routine.exerciseIds.length}', 'EXERCISES'),
+              Container(width: 1, height: 24, color: gc.border),
+              _routineStat(
+                gc,
+                '${routine.exerciseIds.fold<int>(0, (s, id) => s + fit.routineSets(routine, id))}',
+                'TOTAL SETS',
+              ),
+              Container(width: 1, height: 24, color: gc.border),
+              _routineStat(
+                gc,
+                '${routine.exerciseIds.fold<int>(0, (s, id) => s + (fit.routineSets(routine, id) * fit.routineReps(routine, id)))}',
+                'EST. REPS',
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 18),
         _colors(gc, routine),
         const SizedBox(height: 22),
@@ -341,6 +394,17 @@ class _RoutineEditScreenState extends State<RoutineEditScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _routineStat(GymColors gc, String value, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(value, style: AppTheme.f(16, weight: FontWeight.w800, color: gc.text)),
+        const SizedBox(height: 2),
+        Text(label, style: AppTheme.f(9.5, weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 0.8)),
+      ],
     );
   }
 
@@ -572,23 +636,69 @@ class _RoutineEditScreenState extends State<RoutineEditScreen> {
                 Text(t.superset.toUpperCase(),
                     style: AppTheme.f(9.5, weight: FontWeight.w700, color: gc.brass, letterSpacing: 1)),
               ],
-              const SizedBox(height: 2),
-              StepperControl(
-                value: t.setCount(fit.routineSets(routine, ex.id)),
-                minWidth: 62,
-                btnSize: 24,
-                gap: 8,
-                fontSize: 12,
-                btnRadius: 7,
-                onDec: () => fit.bumpRoutineSets(_id, ex.id, -1),
-                onInc: () => fit.bumpRoutineSets(_id, ex.id, 1),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: gc.bgRaised2,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('SETS', style: AppTheme.f(9, weight: FontWeight.w800, color: gc.textTertiary, letterSpacing: 0.5)),
+                        const SizedBox(width: 4),
+                        StepperControl(
+                          value: '${fit.routineSets(routine, ex.id)}',
+                          minWidth: 44,
+                          btnSize: 22,
+                          gap: 6,
+                          fontSize: 12,
+                          btnRadius: 6,
+                          onDec: () => fit.bumpRoutineSets(_id, ex.id, -1),
+                          onInc: () => fit.bumpRoutineSets(_id, ex.id, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: gc.bgRaised2,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('REPS', style: AppTheme.f(9, weight: FontWeight.w800, color: gc.textTertiary, letterSpacing: 0.5)),
+                        const SizedBox(width: 4),
+                        StepperControl(
+                          value: '${fit.routineReps(routine, ex.id)}',
+                          minWidth: 44,
+                          btnSize: 22,
+                          gap: 6,
+                          fontSize: 12,
+                          btnRadius: 6,
+                          onDec: () => fit.bumpRoutineReps(_id, ex.id, -1),
+                          onInc: () => fit.bumpRoutineReps(_id, ex.id, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               if (plan.isNotEmpty) ...[
-                const SizedBox(height: 3),
-                Text(_planLine(plan),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTheme.f(11, weight: FontWeight.w500, color: gc.textSecondary)),
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: () => _openPlan(ex),
+                  child: Text(_planLine(plan),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTheme.f(11, weight: FontWeight.w600, color: gc.ember)),
+                ),
               ],
             ],
           ),

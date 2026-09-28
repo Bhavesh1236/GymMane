@@ -525,13 +525,14 @@ mixin WorkoutState on FitCore, SettingsState, LibraryState, PlacesState, StatsSt
     });
   }
 
-  void startRest() {
+  void startRest([int? customSeconds]) {
     if (sessionPaused || session?.manual == true) return;
     _restTimer?.cancel();
     RestAlarm.instance.stopSound();
-    final seconds = restFor(session!.exercises.isEmpty
+    final defaultSec = restFor(session!.exercises.isEmpty
         ? ''
         : session!.exercises[session!.currentIndex.clamp(0, session!.exercises.length - 1)].id);
+    final seconds = customSeconds ?? (defaultSec > 0 ? defaultSec : 60);
     if (seconds <= 0) {
       session!.clearRest();
       notifyListeners();
@@ -542,6 +543,26 @@ mixin WorkoutState on FitCore, SettingsState, LibraryState, PlacesState, StatsSt
     _armRest(seconds);
     askAlarmPermission();
     notifyListeners();
+  }
+
+  bool get isRestPaused => session?.restFrozen != null;
+  bool get isResting => session?.restRemaining != null;
+
+  void togglePauseRest() {
+    final s = session;
+    if (s == null) return;
+    if (s.restFrozen != null) {
+      final remaining = s.restFrozen!;
+      s.restFrozen = null;
+      _armRest(remaining);
+      notifyListeners();
+    } else if (s.restRemaining != null) {
+      final remaining = s.restRemaining!;
+      _restTimer?.cancel();
+      RestAlarm.instance.cancel();
+      s.restFrozen = remaining;
+      notifyListeners();
+    }
   }
 
   void _armRest(int seconds) {

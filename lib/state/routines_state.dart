@@ -216,6 +216,38 @@ mixin RoutinesState on FitCore, LibraryState {
     notifyListeners();
   }
 
+  int routineReps(Routine r, String exId) {
+    final planned = r.plan[exId];
+    if (planned != null && planned.isNotEmpty) {
+      for (final p in planned) {
+        if (p.reps != null && p.reps! > 0) return p.reps!;
+      }
+    }
+    return 10;
+  }
+
+  void bumpRoutineReps(String routineId, String exId, int delta) {
+    final r = _routine(routineId);
+    if (r == null || !r.exerciseIds.contains(exId)) return;
+    final currentReps = routineReps(r, exId);
+    final nextReps = (currentReps + delta).clamp(1, 100);
+    setRoutineUniformReps(routineId, exId, nextReps);
+  }
+
+  void setRoutineUniformReps(String routineId, String exId, int reps) {
+    final r = _routine(routineId);
+    if (r == null || !r.exerciseIds.contains(exId)) return;
+    final setCount = routineSets(r, exId);
+    final existing = r.plan[exId];
+    final updated = List.generate(setCount, (i) {
+      if (existing != null && i < existing.length) {
+        return existing[i].copyWith(reps: reps);
+      }
+      return PlannedSet(reps: reps, kind: SetKind.normal);
+    });
+    setPlannedSets(routineId, exId, updated);
+  }
+
   bool routineHas(String routineId, String exId) => _routine(routineId)?.exerciseIds.contains(exId) ?? false;
 
   void reorderRoutineExercise(String routineId, int from, int to) {

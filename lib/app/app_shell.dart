@@ -31,6 +31,7 @@ import '../screens/timeline_screen.dart';
 import '../screens/tool_detail_screen.dart';
 import '../screens/tools_screen.dart';
 import '../screens/train_screen.dart';
+import '../screens/veo_animate_screen.dart';
 import '../services/incoming_share.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -63,6 +64,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     'preferences',
     'tools',
     'tools-detail',
+    'veo-animate',
   };
 
   static const _firstAwardWait = Duration(milliseconds: 4000);
@@ -367,6 +369,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         return AiPlanScreen();
       case 'routine-edit':
         return RoutineEditScreen(key: ValueKey(fit.activeRoutineId));
+      case 'veo-animate':
+        return VeoAnimateScreen(initialImagePath: fit.veoInitialImagePath);
       case 'measures':
         return MeasuresScreen();
       case 'places':

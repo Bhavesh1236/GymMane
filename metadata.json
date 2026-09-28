@@ -1,0 +1,8 @@
+{
+  "name": "GymMane",
+  "description": "Clean, privacy-first workout tracker and fitness planner with live sessions, rest timers, routine builder, and progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
