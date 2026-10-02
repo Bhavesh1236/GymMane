@@ -15,6 +15,7 @@ import '../widgets/entrance.dart';
 import '../widgets/exercise_media.dart';
 import '../widgets/glass.dart';
 import '../widgets/liquid_notch.dart';
+import '../widgets/rest_timer_fab.dart';
 import '../widgets/set_kind.dart';
 import '../widgets/share_cards.dart';
 import '../widgets/rolling_text.dart';
@@ -35,10 +36,20 @@ class SessionScreen extends StatelessWidget {
     final gc = context.gc;
     return SafeArea(
       bottom: false,
-      child: SingleChildScrollView(
-        clipBehavior: Clip.none,
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-        child: fit.isSessionComplete ? _complete(context, gc) : _active(context, gc),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            clipBehavior: Clip.none,
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
+            child: fit.isSessionComplete ? _complete(context, gc) : _active(context, gc),
+          ),
+          if (!fit.isSessionComplete && fit.isSessionActive)
+            const Positioned(
+              right: 18,
+              bottom: 20,
+              child: RestTimerFab(),
+            ),
+        ],
       ),
     );
   }

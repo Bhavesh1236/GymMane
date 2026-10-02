@@ -73,17 +73,23 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
 
   Future<void> _loadImageFromPath(String path) async {
     try {
-      if (kIsWeb) {
-        // If web or data URI
-        return;
-      }
-      final file = File(path);
-      if (await file.exists()) {
-        final bytes = await file.readAsBytes();
+      final bytes = await MediaStore.readBytes(path);
+      if (bytes != null) {
         setState(() {
           _imageBytes = bytes;
           _imagePath = path;
         });
+        return;
+      }
+      if (!kIsWeb) {
+        final file = File(path);
+        if (await file.exists()) {
+          final fileBytes = await file.readAsBytes();
+          setState(() {
+            _imageBytes = fileBytes;
+            _imagePath = path;
+          });
+        }
       }
     } catch (_) {}
   }
@@ -157,7 +163,15 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
                     return GestureDetector(
                       onTap: () async {
                         Navigator.of(ctx).pop();
-                        await _loadImageFromPath(fullPath);
+                        final bytes = await MediaStore.readBytes(m.file);
+                        if (bytes != null) {
+                          setState(() {
+                            _imageBytes = bytes;
+                            _imagePath = fullPath;
+                          });
+                        } else {
+                          await _loadImageFromPath(fullPath);
+                        }
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
@@ -579,6 +593,18 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
                       style: AppTheme.f(12, weight: FontWeight.w600, color: gc.warn),
                     ),
                   ),
+                  if (!hasKey) ...[
+                    const SizedBox(width: 8),
+                    Pill(
+                      label: 'Set Key',
+                      bg: gc.ember,
+                      fg: gc.onEmber,
+                      hPad: 10,
+                      vPad: 6,
+                      fontSize: 11,
+                      onTap: _showApiKeyDialog,
+                    ),
+                  ],
                 ]),
               ),
               const SizedBox(height: 16),

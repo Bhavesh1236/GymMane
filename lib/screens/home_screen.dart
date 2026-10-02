@@ -12,6 +12,7 @@ import '../widgets/exercise_media.dart';
 import '../widgets/glass.dart';
 import '../widgets/home_folder.dart';
 import '../widgets/svg_icon.dart';
+import '../widgets/theme_switcher.dart';
 import '../widgets/ui_kit.dart';
 import 'progress_screen.dart';
 
@@ -52,9 +53,32 @@ class HomeScreen extends StatelessWidget {
             SoftCard(
               radius: 22,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-              child: Heatmap(
-                levels: fit.heatmapLevels,
-                onTapDay: (i) => showDaySheet(context, fit.heatmapDate(i)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Heatmap(
+                    levels: fit.heatmapLevels,
+                    onTapDay: (i) => showDaySheet(context, fit.heatmapDate(i)),
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: fit.goCalendar,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(PhosphorIconsRegular.calendarBlank, size: 15, color: gc.ember),
+                        const SizedBox(width: 6),
+                        Text('Open Workout Calendar & Daily Logs',
+                            style: AppTheme.f(12, weight: FontWeight.w700, color: gc.ember)),
+                        const SizedBox(width: 4),
+                        Icon(PhosphorIconsRegular.caretRight, size: 13, color: gc.ember),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             if (recommended.isNotEmpty) ...[
@@ -130,6 +154,8 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
+        const ThemeSwitcher(size: 36),
+        const SizedBox(width: 8),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: fit.goProgress,

@@ -20,6 +20,7 @@ import '../widgets/glass.dart';
 import '../widgets/muscle_radar.dart';
 import '../widgets/rolling_text.dart';
 import '../widgets/ruler_picker.dart';
+import '../widgets/theme_switcher.dart';
 import '../widgets/ui_kit.dart';
 import 'share_sheet.dart';
 import 'start_sheet.dart';
@@ -51,6 +52,8 @@ class ProgressScreen extends StatelessWidget {
                   child: Text(t.progressTitle,
                       style: AppTheme.f(27, weight: FontWeight.w800, color: gc.text)),
                 ),
+                const ThemeSwitcher(size: 38),
+                const SizedBox(width: 8),
                 Semantics(
                   button: true,
                   label: t.share,
@@ -201,7 +204,7 @@ class ProgressScreen extends StatelessWidget {
                     label: t.weightLabel,
                     value: '—',
                     note: t.tileAddWeight,
-                    onTap: () => _logBodyweight(context))
+                    onTap: fit.goBodyComposition)
                 : _tile(
                     gc,
                     label: t.weightLabel,
@@ -216,7 +219,7 @@ class ProgressScreen extends StatelessWidget {
                             color: gc.textSecondary,
                             scale: fmt,
                           ),
-                    onTap: () => _logBodyweight(context),
+                    onTap: fit.goBodyComposition,
                   ),
           ),
         ],
@@ -271,6 +274,23 @@ class ProgressScreen extends StatelessWidget {
             Text(t.weekOfGoal(fit.sessionsThisWeek, fit.weeklyTarget),
                 style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textTertiary)),
           ]),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+          const SizedBox(height: 10),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: fit.goCalendar,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(PhosphorIconsRegular.calendarBlank, size: 14, color: gc.ember),
+                const SizedBox(width: 6),
+                Text('Open Workout Calendar', style: AppTheme.f(12, weight: FontWeight.w700, color: gc.ember)),
+                const SizedBox(width: 4),
+                Icon(PhosphorIconsRegular.caretRight, size: 12, color: gc.ember),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -457,11 +477,99 @@ class ProgressScreen extends StatelessWidget {
   ) {
     return [
       if (fit.sessions.isNotEmpty) _thisWeek(gc),
+      _bodyCompositionCard(gc),
       if (fit.trackedExercises.isNotEmpty) _StrengthCard(),
       if (prs.isNotEmpty) _PrCard(prs),
       if (fit.shotCount > 0) _timelineCard(gc),
       if (fit.measures.isNotEmpty) _measuresCard(gc),
     ];
+  }
+
+  Widget _bodyCompositionCard(GymColors gc) {
+    final weight = fit.latestBodyweight;
+    final bf = fit.latestMeasure('bodyfat');
+    final hasBf = bf != null;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: fit.goBodyComposition,
+      child: SoftCard(
+        radius: 20,
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(color: gc.emberSoft, shape: BoxShape.circle),
+                  child: Icon(PhosphorIconsBold.chartLineUp, size: 16, color: gc.ember),
+                ),
+                const SizedBox(width: 11),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'BODY COMPOSITION & TRENDS',
+                        style: AppTheme.d(13.5, weight: FontWeight.w700, color: gc.text, letterSpacing: 0.8),
+                      ),
+                      Text(
+                        'Weight & Body Fat % over time',
+                        style: AppTheme.s(11.5, weight: FontWeight.w500, color: gc.textSecondary),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(PhosphorIconsRegular.caretRight, size: 15, color: gc.textTertiary),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(color: gc.bgRaised2, borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('WEIGHT', style: AppTheme.f(10, weight: FontWeight.w700, color: gc.textTertiary)),
+                        const SizedBox(height: 2),
+                        Text(
+                          weight != null ? '${fit.weightValue(weight.kg)} ${fit.units}' : '—',
+                          style: AppTheme.f(16, weight: FontWeight.w800, color: gc.ember),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(color: gc.bgRaised2, borderRadius: BorderRadius.circular(12)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('BODY FAT', style: AppTheme.f(10, weight: FontWeight.w700, color: gc.textTertiary)),
+                        const SizedBox(height: 2),
+                        Text(
+                          hasBf ? fit.measureLabel('bodyfat', bf.value) : '—',
+                          style: AppTheme.f(16, weight: FontWeight.w800, color: gc.sage),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _timelineCard(GymColors gc) {

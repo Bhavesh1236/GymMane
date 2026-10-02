@@ -12,6 +12,7 @@ import '../widgets/glass.dart';
 import '../widgets/rolling_text.dart';
 import '../widgets/ruler_picker.dart';
 import '../widgets/svg_icon.dart';
+import '../widgets/theme_switcher.dart';
 import '../widgets/ui_kit.dart';
 
 class MeasuresScreen extends StatelessWidget {
@@ -33,6 +34,49 @@ class MeasuresScreen extends StatelessWidget {
               title: t.measures,
               subtitle: t.measureCount(fit.measures.length),
               onBack: fit.backFromMeasures,
+              actions: const [ThemeSwitcher(size: 36)],
+            ),
+            const SizedBox(height: 14),
+            GestureDetector(
+              onTap: fit.goBodyComposition,
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: gc.bgRaised,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: gc.ember.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: gc.emberSoft,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(PhosphorIconsFill.chartLineUp, size: 18, color: gc.ember),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Body Composition & Trends',
+                            style: AppTheme.f(13.5, weight: FontWeight.w700, color: gc.text),
+                          ),
+                          Text(
+                            'View weight & body fat percentage trends',
+                            style: AppTheme.f(11.5, weight: FontWeight.w500, color: gc.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(PhosphorIconsRegular.caretRight, size: 16, color: gc.textTertiary),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 14),
             Text(t.measuresHint, style: AppTheme.s(13, color: gc.textSecondary, height: 1.5)),

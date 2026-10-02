@@ -83,4 +83,12 @@ mixin MeasuresState on FitCore {
   void goMeasures() => pushRoute('measures');
 
   void backFromMeasures() => popRoute(fallback: 'progress');
+
+  void goBodyComposition() => pushRoute('body-composition');
+
+  void backFromBodyComposition() => popRoute(fallback: 'progress');
+
+  void goCalendar() => pushRoute('calendar');
+
+  void backFromCalendar() => popRoute(fallback: 'home');
 }

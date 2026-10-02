@@ -31,7 +31,9 @@ import '../widgets/liquid_notch.dart';
 import '../widgets/photo_source_sheet.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/ruler_picker.dart';
+import '../widgets/theme_switcher.dart';
 import '../widgets/timer_panel.dart';
+import 'data_portability_sheet.dart';
 import 'profile_screen.dart';
 import '../widgets/ui_kit.dart';
 
@@ -57,7 +59,15 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: riseAll([
-            ScreenHeader(title: t.settings, onBack: fit.backFromPreferences),
+            ScreenHeader(
+              title: t.settings,
+              onBack: fit.backFromPreferences,
+              actions: const [ThemeSwitcher(size: 36)],
+            ),
+            const SizedBox(height: 18),
+            _sectionLabel(gc, 'THEME MODE'),
+            const SizedBox(height: 8),
+            const ThemeSegmentedSelector(),
             const SizedBox(height: 20),
             _sectionLabel(gc, t.preferences),
             const SizedBox(height: 8),
@@ -286,12 +296,13 @@ class SettingsScreen extends StatelessWidget {
             _sectionLabel(gc, t.data),
             const SizedBox(height: 8),
             _linkGroup(gc, [
+              (PhosphorIconsRegular.fileCode, 'Export JSON (History & Progress)', () => showDataPortabilitySheet(context, initialTab: 0)),
+              (PhosphorIconsRegular.downloadSimple, 'Import JSON (Restore or Merge)', () => showDataPortabilitySheet(context, initialTab: 1)),
               (PhosphorIconsRegular.fileCsv, t.exportCsv, () => _exportCsv(context)),
               (PhosphorIconsRegular.fileZip, t.exportBackup, () => _exportBackup(context)),
-              (PhosphorIconsRegular.downloadSimple, t.importBackup, () => _importBackup(context)),
               (PhosphorIconsRegular.arrowSquareIn, t.importFromApp, () => _openImportApps(context)),
               (PhosphorIconsRegular.trash, t.resetData, () => _resetAll(context)),
-            ], danger: 4),
+            ], danger: 5),
             const SizedBox(height: 18),
             _sectionLabel(gc, t.support),
             const SizedBox(height: 8),

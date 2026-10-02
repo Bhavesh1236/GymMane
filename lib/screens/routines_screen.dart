@@ -14,6 +14,7 @@ import '../widgets/routine_folder.dart';
 import '../widgets/svg_icon.dart';
 import '../widgets/ui_kit.dart';
 import 'plan_import_sheet.dart';
+import 'predefined_routines_sheet.dart';
 
 class RoutinesScreen extends StatelessWidget {
   const RoutinesScreen({super.key});
@@ -34,6 +35,15 @@ class RoutinesScreen extends StatelessWidget {
               onBack: fit.backFromRoutines,
               titleSize: 22,
               actions: [
+                Semantics(
+                  button: true,
+                  label: 'Routine Library',
+                  child: RoundAction(
+                    onTap: () => showPredefinedRoutinesSheet(context),
+                    child: Icon(PhosphorIconsRegular.stack, size: 17, color: gc.text),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Semantics(
                   button: true,
                   label: t.importRoutines,
@@ -82,6 +92,11 @@ class RoutinesScreen extends StatelessWidget {
               _folders(context, fit.routinesInGroup('')),
             ],
             const SizedBox(height: 16),
+            PrimaryButton(
+              label: 'Pre-defined Routine Library',
+              onTap: () => showPredefinedRoutinesSheet(context),
+            ),
+            const SizedBox(height: 10),
             PrimaryButton(
               label: t.newRoutine,
               onTap: () => fit.openRoutine(fit.createRoutine()),

@@ -7,7 +7,10 @@ import '../models/exercise.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
+import '../widgets/theme_switcher.dart';
 import '../widgets/ui_kit.dart';
+import 'data_portability_sheet.dart';
+import 'predefined_routines_sheet.dart';
 
 IconData _toolIcon(String id) => switch (id) {
       'rm' => PhosphorIconsRegular.barbell,
@@ -37,6 +40,7 @@ class ToolsScreen extends StatelessWidget {
               onBack: fit.backFromTools,
               titleSize: 22,
               subtitle: t.calculatorsCount(kToolMeta.length),
+              actions: const [ThemeSwitcher(size: 36)],
             ),
             const SizedBox(height: 18),
             GestureDetector(
@@ -86,6 +90,230 @@ class ToolsScreen extends StatelessWidget {
                           const SizedBox(height: 3),
                           Text(
                             'Generate AI fitness videos from photos (16:9 & 9:16) with Veo 3.1 Fast',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => showPredefinedRoutinesSheet(context),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: gc.bgRaised,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: gc.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: gc.sageSoft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(PhosphorIconsFill.stack, size: 22, color: gc.sage),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Pre-defined Routine Library',
+                              style: AppTheme.f(14.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 6),
+                            Pill(
+                              label: 'CURATED',
+                              bg: gc.sage.withValues(alpha: 0.15),
+                              fg: gc.sage,
+                              fontSize: 9.5,
+                              hPad: 6,
+                              vPad: 2,
+                              onTap: () => showPredefinedRoutinesSheet(context),
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Browse & import pre-defined workout routines into your tracker',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: fit.goBodyComposition,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: gc.bgRaised,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: gc.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: gc.emberSoft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(PhosphorIconsFill.chartLineUp, size: 22, color: gc.ember),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Body Composition Trends',
+                              style: AppTheme.f(14.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 6),
+                            Pill(
+                              label: 'TRENDS',
+                              bg: gc.ember.withValues(alpha: 0.15),
+                              fg: gc.ember,
+                              fontSize: 9.5,
+                              hPad: 6,
+                              vPad: 2,
+                              onTap: fit.goBodyComposition,
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Track & visualize body weight and body fat % curves over time',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: fit.goCalendar,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: gc.bgRaised,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: gc.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: gc.brass.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(PhosphorIconsFill.calendarBlank, size: 22, color: gc.brass),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Workout Calendar',
+                              style: AppTheme.f(14.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 6),
+                            Pill(
+                              label: 'CALENDAR',
+                              bg: gc.brass.withValues(alpha: 0.15),
+                              fg: gc.brass,
+                              fontSize: 9.5,
+                              hPad: 6,
+                              vPad: 2,
+                              onTap: fit.goCalendar,
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Month-by-month completed workouts and detailed exercise breakdown',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.textTertiary),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => showDataPortabilitySheet(context),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: gc.bgRaised,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: gc.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: gc.accentSoft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(PhosphorIconsFill.database, size: 22, color: gc.accent),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Data Portability (JSON)',
+                              style: AppTheme.f(14.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 6),
+                            Pill(
+                              label: 'BACKUP',
+                              bg: gc.accentSoft,
+                              fg: gc.accent,
+                              fontSize: 9.5,
+                              hPad: 6,
+                              vPad: 2,
+                              onTap: () => showDataPortabilitySheet(context),
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Export and import workout history and progress data as portable JSON',
                             style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
                           ),
                         ],

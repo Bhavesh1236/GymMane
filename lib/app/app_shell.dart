@@ -24,6 +24,8 @@ import '../screens/routines_screen.dart';
 import '../screens/session_screen.dart';
 import '../screens/start_sheet.dart';
 import '../screens/awards_screen.dart';
+import '../screens/body_composition_screen.dart';
+import '../screens/calendar_screen.dart';
 import '../screens/moments_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
@@ -373,6 +375,10 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         return VeoAnimateScreen(initialImagePath: fit.veoInitialImagePath);
       case 'measures':
         return MeasuresScreen();
+      case 'body-composition':
+        return const BodyCompositionScreen();
+      case 'calendar':
+        return const CalendarScreen();
       case 'places':
         return PlacesScreen();
       case 'timeline':
