@@ -29,7 +29,7 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
     return AnimatedBuilder(
       animation: _c,
       builder: (context, _) {
-        final x = -1.6 + 3.2 * Curves.easeInOutSine.transform(_c.value);
+        final x = -1.6 + 3.2 * Curves.easeInOutSine.transform(_c.value.clamp(0.0, 1.0));
         return DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.radius),

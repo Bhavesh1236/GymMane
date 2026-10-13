@@ -1,5 +1,6 @@
 package com.gymmane.app
 
+import com.gymmane.app.R
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

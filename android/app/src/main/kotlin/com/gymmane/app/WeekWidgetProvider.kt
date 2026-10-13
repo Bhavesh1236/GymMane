@@ -1,5 +1,6 @@
 package com.gymmane.app
 
+import com.gymmane.app.R
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences

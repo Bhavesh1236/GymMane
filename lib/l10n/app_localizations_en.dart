@@ -40,16 +40,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get set => 'Set';
 
   @override
-  String get home => 'HOME';
+  String get home => 'Home';
 
   @override
-  String get progress => 'PROGRESS';
+  String get progress => 'Progress';
 
   @override
-  String get exercises => 'EXERCISES';
+  String get exercises => 'Exercises';
 
   @override
-  String get settings => 'SETTINGS';
+  String get settings => 'Settings';
 
   @override
   String get today => 'TODAY';

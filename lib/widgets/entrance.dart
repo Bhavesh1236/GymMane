@@ -176,7 +176,7 @@ class _RollInState extends State<RollIn> with SingleTickerProviderStateMixin {
       child: AnimatedBuilder(
         animation: c,
         builder: (context, _) {
-          final count = total * Curves.easeOutCubic.transform(c.value);
+          final count = total * Curves.easeOutCubic.transform(c.value.clamp(0.0, 1.0));
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [

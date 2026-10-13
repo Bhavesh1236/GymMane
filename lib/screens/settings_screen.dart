@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
 import '../models/profile.dart';
@@ -37,10 +36,6 @@ import 'data_portability_sheet.dart';
 import 'profile_screen.dart';
 import '../widgets/ui_kit.dart';
 
-const _kRepoUrl = 'https://github.com/InlitX/GymMane';
-const _kBugUrl = '$_kRepoUrl/issues/new?labels=bug';
-const _kFeatureUrl = '$_kRepoUrl/issues/new?labels=enhancement';
-const _kKofiUrl = 'https://ko-fi.com/inlitx';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -73,7 +68,6 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             SoftCard(
               radius: 20,
-              borderColor: Colors.transparent,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
@@ -304,15 +298,6 @@ class SettingsScreen extends StatelessWidget {
               (PhosphorIconsRegular.trash, t.resetData, () => _resetAll(context)),
             ], danger: 5),
             const SizedBox(height: 18),
-            _sectionLabel(gc, t.support),
-            const SizedBox(height: 8),
-            _linkGroup(gc, [
-              (PhosphorIconsRegular.bug, t.reportBug, () => _open(context, _kBugUrl)),
-              (PhosphorIconsRegular.lightbulb, t.requestFeature, () => _open(context, _kFeatureUrl)),
-              (PhosphorIconsRegular.githubLogo, t.starOnGithub, () => _open(context, _kRepoUrl)),
-              (PhosphorIconsRegular.coffee, t.buyCoffee, () => _open(context, _kKofiUrl)),
-            ]),
-            const SizedBox(height: 22),
             _linkGroup(gc, [
               (PhosphorIconsRegular.info, t.aboutGymmane, fit.goAbout),
             ]),
@@ -446,12 +431,10 @@ class SettingsScreen extends StatelessWidget {
       );
 
   Widget _linkGroup(GymColors gc, List<(IconData, String, VoidCallback)> items, {int? danger}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: gc.bgRaised,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      clipBehavior: Clip.antiAlias,
+    return SoftCard(
+      radius: 20,
+      padding: EdgeInsets.zero,
+      clip: true,
       child: Column(
         children: [
           for (int i = 0; i < items.length; i++)
@@ -643,27 +626,6 @@ class SettingsScreen extends StatelessWidget {
                   _importFromApp(context);
                 },
               ),
-              const SizedBox(height: 6),
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  Navigator.pop(sheet);
-                  _open(context, _kFeatureUrl);
-                },
-                child: Container(
-                  height: 46,
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(PhosphorIconsRegular.githubLogo, size: 15, color: gc.accent),
-                      const SizedBox(width: 8),
-                      Text(t.importAskApp,
-                          style: AppTheme.f(13, weight: FontWeight.w600, color: gc.accent)),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -780,16 +742,6 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _open(BuildContext context, String url) async {
-    var ok = false;
-    try {
-      ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } catch (_) {
-      ok = false;
-    }
-    if (!ok && context.mounted) _snack(context, t.cantOpenLink);
   }
 
   Future<void> _addWidget(BuildContext context, String provider) async {

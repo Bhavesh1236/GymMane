@@ -10,6 +10,8 @@ mixin RoutinesState on FitCore, LibraryState {
 
   void goAiPlan() => pushRoute('ai-plan');
 
+  void goSmartAiCoach() => pushRoute('smart-ai-coach');
+
   void backFromAiPlan() => popRoute(fallback: 'routines');
 
   void backFromRoutines() => popRoute();

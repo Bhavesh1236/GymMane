@@ -16,10 +16,10 @@
   "done": "DONE",
   "set": "Set",
 
-  "home": "HOME",
-  "progress": "PROGRESS",
-  "exercises": "EXERCISES",
-  "settings": "SETTINGS",
+  "home": "Home",
+  "progress": "Progress",
+  "exercises": "Exercises",
+  "settings": "Settings",
 
   "today": "TODAY",
   "thisWeek": "THIS WEEK",

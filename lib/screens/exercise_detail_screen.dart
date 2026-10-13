@@ -8,6 +8,7 @@ import '../models/workout.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
+import '../theme/exercise_palette.dart';
 import '../widgets/charts.dart';
 import '../widgets/entrance.dart';
 import '../widgets/exercise_media.dart';
@@ -43,6 +44,7 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
   Widget build(BuildContext context) {
     final gc = context.gc;
     final ex = fit.activeExercise;
+    final palette = musclePaletteFor(ex.primary);
     final fav = fit.favorites[ex.id] ?? false;
     final secondary =
         ex.secondary.map(muscleLabel).join(', ').isEmpty ? t.none : ex.secondary.map(muscleLabel).join(', ');
@@ -136,6 +138,25 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: palette.badgeGradient(),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: palette.primary.withValues(alpha: 0.4),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      muscleLabel(ex.primary).toUpperCase(),
+                      style: AppTheme.f(11,
+                          weight: FontWeight.w800,
+                          color: palette.primary,
+                          letterSpacing: 0.6),
+                    ),
+                  ),
                   Text(exerciseName(ex),
                       style: AppTheme.f(26, weight: FontWeight.w800, color: gc.text, height: 1.1)),
                   const SizedBox(height: 18),
@@ -181,8 +202,19 @@ class _ExerciseDetailScreenState extends State<ExerciseDetailScreen> {
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: gc.bgRaised,
+                        gradient: palette.cardGradient(gc, isDark: fit.dark),
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: palette.primary.withValues(alpha: 0.28),
+                          width: 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: palette.primary.withValues(alpha: 0.08),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

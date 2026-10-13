@@ -85,10 +85,10 @@ class _StartCountdownState extends State<StartCountdown> with TickerProviderStat
         child: AnimatedBuilder(
         animation: Listenable.merge([_beat, _veil]),
         builder: (context, _) {
-          final veil = Curves.easeOut.transform(_veil.value);
-          final b = _beat.value;
+          final veil = Curves.easeOut.transform(_veil.value.clamp(0.0, 1.0));
+          final b = _beat.value.clamp(0.0, 1.0);
           final pop = Curves.easeOutBack.transform((b / 0.45).clamp(0.0, 1.0));
-          final fade = b < 0.7 ? 1.0 : 1 - Curves.easeIn.transform((b - 0.7) / 0.3);
+          final fade = b < 0.7 ? 1.0 : 1 - Curves.easeIn.transform(((b - 0.7) / 0.3).clamp(0.0, 1.0));
           return Stack(
             fit: StackFit.expand,
             children: [

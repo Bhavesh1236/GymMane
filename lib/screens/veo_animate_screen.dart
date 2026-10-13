@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io' show File;
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-import '../l10n/l10n.dart';
 import '../services/media_store.dart';
 import '../services/veo_service.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
-import '../widgets/dialogs.dart';
 import '../widgets/glass.dart';
 import '../widgets/liquid_notch.dart';
 import '../widgets/photo_source_sheet.dart';
@@ -37,7 +33,6 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
   final TextEditingController _apiKeyController = TextEditingController();
 
   Uint8List? _imageBytes;
-  String? _imagePath;
   String _aspectRatio = '16:9'; // '16:9' or '9:16'
   bool _isGenerating = false;
   String _statusText = '';
@@ -77,7 +72,6 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
       if (bytes != null) {
         setState(() {
           _imageBytes = bytes;
-          _imagePath = path;
         });
         return;
       }
@@ -111,7 +105,6 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
       final bytes = await picked.readAsBytes();
       setState(() {
         _imageBytes = bytes;
-        _imagePath = picked.path;
         _errorMessage = null;
       });
     } catch (e) {
@@ -478,7 +471,6 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
                         GestureDetector(
                           onTap: () => setState(() {
                             _imageBytes = null;
-                            _imagePath = null;
                           }),
                           child: Container(
                             width: 30,
@@ -667,7 +659,7 @@ class _VeoAnimateScreenState extends State<VeoAnimateScreen> {
             if (_videoResult != null) ...[
               const SizedBox(height: 28),
               Text(
-                'GENERATED VEO VIDEO (${_aspectRatio})',
+                'GENERATED VEO VIDEO ($_aspectRatio)',
                 style: AppTheme.f(11.5, weight: FontWeight.w700, color: gc.textSecondary, letterSpacing: 1.5),
               ),
               const SizedBox(height: 12),

@@ -34,8 +34,11 @@ mixin LibraryState on FitCore {
     notifyListeners();
   }
 
+  final Set<String> exMuscleFilters = {};
+
   void clearExFilters() {
     exSearch = '';
+    exMuscleFilters.clear();
     exMuscleFilter = null;
     exDifficultyFilter = null;
     exEquipmentFilter = null;
@@ -43,9 +46,24 @@ mixin LibraryState on FitCore {
     notifyListeners();
   }
 
-  void setMuscleFilter(String id) {
-    exMuscleFilter = exMuscleFilter == id ? null : id;
+  void clearMuscleFilters() {
+    exMuscleFilters.clear();
+    exMuscleFilter = null;
     notifyListeners();
+  }
+
+  void toggleMuscleFilter(String id) {
+    if (exMuscleFilters.contains(id)) {
+      exMuscleFilters.remove(id);
+    } else {
+      exMuscleFilters.add(id);
+    }
+    exMuscleFilter = exMuscleFilters.isEmpty ? null : exMuscleFilters.first;
+    notifyListeners();
+  }
+
+  void setMuscleFilter(String id) {
+    toggleMuscleFilter(id);
   }
 
   void setDifficultyFilter(String d) {
@@ -69,25 +87,34 @@ mixin LibraryState on FitCore {
 
   List<Exercise> get exercisesFiltered => exercisesMatching(exSearch);
 
+  bool _exerciseMatchesMuscle(Exercise ex, String filterId) {
+    final fid = filterId.toLowerCase();
+    final pGroup = muscleGroup(ex.primary).toLowerCase();
+    if (ex.primary.toLowerCase() == fid || pGroup == fid) return true;
+    for (final s in ex.secondary) {
+      if (s.toLowerCase() == fid || muscleGroup(s).toLowerCase() == fid) return true;
+    }
+    return false;
+  }
+
   List<Exercise> exercisesMatching(String query) {
     final matchesSearch = exerciseSearch(query);
     final list = allExercises.where((ex) {
       if (exFavouritesOnly && favorites[ex.id] != true) return false;
       if (!matchesSearch(ex)) return false;
-      if (exMuscleFilter != null &&
-          ex.primary != exMuscleFilter &&
-          !ex.secondary.contains(exMuscleFilter)) {
+      if (exMuscleFilters.isNotEmpty) {
+        if (!exMuscleFilters.any((filter) => _exerciseMatchesMuscle(ex, filter))) {
+          return false;
+        }
+      } else if (exMuscleFilter != null && !_exerciseMatchesMuscle(ex, exMuscleFilter!)) {
         return false;
       }
       if (exDifficultyFilter != null && ex.difficulty != exDifficultyFilter) return false;
       if (exEquipmentFilter != null && ex.equipment != exEquipmentFilter) return false;
       return true;
     }).toList();
-    final muscle = exMuscleFilter;
-    if (muscle == null) return _groupedByMuscle(list);
-    final primary = list.where((ex) => ex.primary == muscle);
-    final secondary = _groupedByMuscle(list.where((ex) => ex.primary != muscle).toList());
-    return [...primary, ...secondary];
+    if (exMuscleFilters.isEmpty && exMuscleFilter == null) return _groupedByMuscle(list);
+    return _groupedByMuscle(list);
   }
 
   List<Exercise> _groupedByMuscle(List<Exercise> list) {

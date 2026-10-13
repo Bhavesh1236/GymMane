@@ -112,12 +112,9 @@ class SessionScreen extends StatelessWidget {
         ),
         _ExerciseStage(
           index: exIdx,
-          child: Container(
+          child: SoftCard(
+            radius: 22,
             padding: const EdgeInsets.fromLTRB(_cardPad, 16, _cardPad, 16),
-            decoration: BoxDecoration(
-              color: gc.bgRaised,
-              borderRadius: BorderRadius.circular(20),
-            ),
             child: Column(
               children: [
                 Padding(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../catalog/exercise_catalog.dart';
 import '../l10n/l10n.dart';
@@ -12,9 +11,6 @@ import '../widgets/ui_kit.dart';
 
 const _kVersion = '1.3.0';
 const _kAuthor = 'InlitX';
-const _kAuthorUrl = 'https://github.com/InlitX';
-const _kRepoUrl = 'https://github.com/InlitX/GymMane';
-const _kKofiUrl = 'https://ko-fi.com/inlitx';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -183,69 +179,37 @@ class AboutScreen extends StatelessWidget {
   }
 
   Widget _credits(GymColors gc) {
-    final rows = <(IconData, String, String, String, Color?)>[
-      (PhosphorIconsFill.heart, t.madeWithLoveBy, _kAuthor, _kAuthorUrl, gc.accent),
-      (PhosphorIconsRegular.githubLogo, t.sourceCode, 'InlitX/GymMane', _kRepoUrl, null),
-      (PhosphorIconsRegular.coffee, t.buyCoffee, 'ko-fi.com/inlitx', _kKofiUrl, null),
-    ];
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: gc.bgRaised,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
         children: [
-          for (int i = 0; i < rows.length; i++)
-            Semantics(
-              button: true,
-              link: true,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => _open(rows[i].$4),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    border: i < rows.length - 1
-                        ? Border(bottom: BorderSide(color: gc.border.withValues(alpha: 0.6)))
-                        : null,
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 14),
-                        child: SizedBox(
-                          width: 22,
-                          child: Icon(rows[i].$1, size: 19, color: rows[i].$5 ?? gc.textSecondary),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(rows[i].$2.toUpperCase(),
-                                style: AppTheme.f(10,
-                                    weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 1.3)),
-                            const SizedBox(height: 4),
-                            Text(rows[i].$3,
-                                style: AppTheme.f(15.5, weight: FontWeight.w700, color: gc.text)),
-                          ],
-                        ),
-                      ),
-                      Icon(PhosphorIconsRegular.arrowUpRight, size: 15, color: gc.textTertiary),
-                    ],
-                  ),
-                ),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(right: 14),
+            child: SizedBox(
+              width: 22,
+              child: Icon(PhosphorIconsFill.heart, size: 19, color: gc.accent),
             ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(t.madeWithLoveBy.toUpperCase(),
+                    style: AppTheme.f(10,
+                        weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 1.3)),
+                const SizedBox(height: 4),
+                Text(_kAuthor,
+                    style: AppTheme.f(15.5, weight: FontWeight.w700, color: gc.text)),
+              ],
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  Future<void> _open(String url) async {
-    try {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } catch (_) {}
   }
 }

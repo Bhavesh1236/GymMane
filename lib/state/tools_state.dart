@@ -2,6 +2,7 @@ part of 'fit_state.dart';
 
 mixin ToolsState on FitCore {
   String? activeToolId;
+  String rmFormula = 'epley';
   double rmWeight = 100;
   int rmReps = 5;
   double bmiHeight = 175;
@@ -49,7 +50,24 @@ mixin ToolsState on FitCore {
 
   void backFromTools() => popRoute();
 
-  double get rmResult => _round1(rmWeight * (1 + rmReps / 30));
+  void setRmFormula(String formula) {
+    if (rmFormula == formula) return;
+    rmFormula = formula;
+    notifyListeners();
+  }
+
+  double get rmResult {
+    if (rmReps <= 1) return _round1(rmWeight);
+    if (rmFormula == 'brzycki') {
+      final denom = 37 - rmReps;
+      return _round1(denom > 0 ? rmWeight * 36 / denom : rmWeight * (1 + rmReps / 30));
+    }
+    if (rmFormula == 'lombardi') {
+      return _round1(rmWeight * math.pow(rmReps, 0.10));
+    }
+    // Default: Epley (1985)
+    return _round1(rmWeight * (1 + rmReps / 30));
+  }
 
   double get bmiVal => _round1(bmiWeight / math.pow(bmiHeight / 100, 2));
 

@@ -44,6 +44,73 @@ class ToolsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             GestureDetector(
+              onTap: () => fit.goSmartAiCoach(),
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [gc.bgRaised, gc.bgRaised2],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: gc.accent.withValues(alpha: 0.45)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gc.accent.withValues(alpha: 0.1),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [gc.accent, gc.brass]),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(PhosphorIconsFill.sparkle, size: 24, color: gc.bg),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(
+                              'Gym AI Smart Coach',
+                              style: AppTheme.f(15.5, weight: FontWeight.w800, color: gc.text),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: gc.accent,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text('FEATURED',
+                                  style: AppTheme.f(9.5, weight: FontWeight.w900, color: gc.bg)),
+                            ),
+                          ]),
+                          const SizedBox(height: 3),
+                          Text(
+                            'AI Routine Architect, 1RM Percentages Matrix & Barbell Plate Math',
+                            style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: gc.accent),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GestureDetector(
               onTap: () => fit.goVeoAnimate(),
               child: Container(
                 padding: const EdgeInsets.all(18),
@@ -347,33 +414,73 @@ class ToolsScreen extends StatelessWidget {
   }
 
   Widget _card(GymColors gc, ToolMeta tool) {
-    return GestureDetector(
+    final (accentColor, iconBg) = switch (tool.id) {
+      'rm' => (gc.accent, gc.accent.withValues(alpha: 0.14)),
+      'bmi' => (gc.sage, gc.sage.withValues(alpha: 0.14)),
+      'cal' => (gc.ember, gc.ember.withValues(alpha: 0.14)),
+      'bf' => (gc.brass, gc.brass.withValues(alpha: 0.14)),
+      'plate' => (const Color(0xFF64B5F6), const Color(0xFF64B5F6).withValues(alpha: 0.14)),
+      _ => (gc.accent, gc.accent.withValues(alpha: 0.14)),
+    };
+
+    return Pressable(
       onTap: () => fit.openTool(tool.id),
+      scale: 0.96,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: gc.bgRaised,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: accentColor.withValues(alpha: 0.18),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.05),
+              blurRadius: 14,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration:
-                  BoxDecoration(color: gc.bgRaised2, borderRadius: BorderRadius.circular(12)),
-              child: Center(child: Icon(_toolIcon(tool.id), size: 19, color: gc.textSecondary)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.28),
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(_toolIcon(tool.id), size: 21, color: accentColor),
+                  ),
+                ),
+                Icon(PhosphorIconsRegular.caretRight, size: 14, color: gc.textTertiary),
+              ],
             ),
             const Spacer(),
             Text(t.toolName(tool.id),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.f(14.5, weight: FontWeight.w700, color: gc.text)),
-            const SizedBox(height: 2),
+                style: AppTheme.f(15, weight: FontWeight.w800, color: gc.text)),
+            const SizedBox(height: 3),
             SizedBox(
-              height: 31,
+              height: 32,
               child: Text(t.toolDesc(tool.id),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

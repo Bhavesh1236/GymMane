@@ -98,36 +98,64 @@ class StartSheet extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => _go(context, () => fit.startRoutine(r, on: day)),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: gc.emberSoft,
-          border: Border.all(color: gc.ember.withValues(alpha: 0.4)),
-          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: gc.ember.withValues(alpha: 0.45), width: 1.2),
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: gc.ember.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(day == null ? t.todaysRoutine : t.plannedRoutine,
-                    style: AppTheme.f(10.5, weight: FontWeight.w700, color: gc.brass, letterSpacing: 1.2)),
-                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: gc.ember.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(day == null ? t.todaysRoutine : t.plannedRoutine,
+                      style: AppTheme.f(10.5, weight: FontWeight.w800, color: gc.ember, letterSpacing: 1)),
+                ),
+                const SizedBox(height: 8),
                 Text(fit.routineTitle(r),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTheme.f(18, weight: FontWeight.w700, color: gc.text)),
+                    style: AppTheme.f(18, weight: FontWeight.w800, color: gc.text)),
                 const SizedBox(height: 2),
                 Text(t.exerciseCount(r.exerciseIds.length),
                     style: AppTheme.f(12.5, weight: FontWeight.w500, color: gc.textSecondary)),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(color: gc.ember, shape: BoxShape.circle),
-            child: Icon(PhosphorIconsFill.play, size: 18, color: gc.onEmber),
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [gc.ember, gc.accent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: gc.ember.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Icon(PhosphorIconsFill.play, size: 20, color: gc.onEmber),
           ),
         ]),
       ),

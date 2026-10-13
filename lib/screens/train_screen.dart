@@ -104,10 +104,27 @@ class _TrainScreenState extends State<TrainScreen> {
         Text(t.chooseFocus, style: AppTheme.f(28, weight: FontWeight.w800, color: gc.text)),
         const SizedBox(height: 18),
         Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: gc.bgRaised,
             borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+              if (hasSel)
+                BoxShadow(
+                  color: gc.ember.withValues(alpha: 0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, 2),
+                ),
+            ],
           ),
           child: BodyMap(
             selected: fit.selectedMuscles.toSet(),
@@ -143,11 +160,15 @@ class _TrainScreenState extends State<TrainScreen> {
 
   Widget _chip(GymColors gc, String id) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(color: gc.emberSoft, borderRadius: BorderRadius.circular(100)),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: gc.ember.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: gc.ember.withValues(alpha: 0.35), width: 1),
+      ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Text(t.muscle(id), style: AppTheme.f(13, weight: FontWeight.w600, color: gc.ember)),
-        const SizedBox(width: 6),
+        Text(t.muscle(id), style: AppTheme.f(13, weight: FontWeight.w700, color: gc.ember)),
+        const SizedBox(width: 7),
         GestureDetector(
           onTap: () => fit.toggleMuscle(id),
           child: SvgPathIcon(Ic.closeThin, size: 12, color: gc.ember),

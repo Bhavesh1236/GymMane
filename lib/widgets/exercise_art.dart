@@ -188,7 +188,7 @@ class _ArtPainter extends CustomPainter {
     final ascending = step < n - 1;
     final from = ascending ? step : steps - step;
     final to = ascending ? from + 1 : from - 1;
-    final blend = f < 0.72 ? 0.0 : Curves.easeInOut.transform((f - 0.72) / 0.28);
+    final blend = f < 0.72 ? 0.0 : Curves.easeInOut.transform(((f - 0.72) / 0.28).clamp(0.0, 1.0));
 
     _draw(canvas, art.frames[from], 1 - blend);
     if (blend > 0) _draw(canvas, art.frames[to], blend);

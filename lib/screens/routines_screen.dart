@@ -66,16 +66,15 @@ class RoutinesScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 22),
-            Text(t.weeklyPlan, style: AppTheme.f(12, weight: FontWeight.w600, color: gc.textSecondary, letterSpacing: 1.5)),
+            Text(t.weeklyPlan, style: AppTheme.f(12, weight: FontWeight.w700, color: gc.textSecondary, letterSpacing: 1.5)),
             const SizedBox(height: 10),
             SoftCard(
-              radius: 20,
-              borderColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              radius: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
               child: Column(children: [for (int i = 0; i < 7; i++) _dayRow(context, gc, i)]),
             ),
             const SizedBox(height: 26),
-            Text(t.yourRoutines, style: AppTheme.f(12, weight: FontWeight.w600, color: gc.textSecondary, letterSpacing: 1.5)),
+            Text(t.yourRoutines, style: AppTheme.f(12, weight: FontWeight.w700, color: gc.textSecondary, letterSpacing: 1.5)),
             const SizedBox(height: 10),
             if (fit.routines.isEmpty)
               Padding(
@@ -91,7 +90,7 @@ class RoutinesScreen extends StatelessWidget {
               ],
               _folders(context, fit.routinesInGroup('')),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             PrimaryButton(
               label: 'Pre-defined Routine Library',
               onTap: () => showPredefinedRoutinesSheet(context),
@@ -99,25 +98,34 @@ class RoutinesScreen extends StatelessWidget {
             const SizedBox(height: 10),
             PrimaryButton(
               label: t.newRoutine,
+              icon: Ic.plus,
               onTap: () => fit.openRoutine(fit.createRoutine()),
             ),
             const SizedBox(height: 10),
-            GhostButton(
-              label: t.templates,
-              icon: PhosphorIconsRegular.stack,
-              onTap: () => _openTemplates(context),
+            Row(
+              children: [
+                Expanded(
+                  child: GhostButton(
+                    label: t.templates,
+                    icon: PhosphorIconsRegular.stack,
+                    onTap: () => _openTemplates(context),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: GhostButton(
+                    label: t.aiRoutine,
+                    icon: PhosphorIconsRegular.sparkle,
+                    onTap: fit.goAiPlan,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             GhostButton(
               label: t.importRoutines,
               icon: PhosphorIconsRegular.downloadSimple,
               onTap: () => showPlanImportSheet(context),
-            ),
-            const SizedBox(height: 10),
-            GhostButton(
-              label: t.aiRoutine,
-              icon: PhosphorIconsRegular.sparkle,
-              onTap: fit.goAiPlan,
             ),
           ],
         ),
@@ -263,14 +271,23 @@ class RoutinesScreen extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: gc.bgRaised2,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white.withValues(alpha: fit.dark ? 0.06 : 0.2)),
         ),
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(color: gc.emberSoft, borderRadius: BorderRadius.circular(12)),
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [gc.emberSoft, gc.accentSoft],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: gc.ember.withValues(alpha: 0.28)),
+              ),
               child: Icon(PhosphorIconsRegular.stack, size: 20, color: gc.ember),
             ),
             const SizedBox(width: 14),
@@ -279,18 +296,30 @@ class RoutinesScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(template.name,
-                      style: AppTheme.f(15, weight: FontWeight.w700, color: gc.text, letterSpacing: 0.5)),
+                      style: AppTheme.f(15, weight: FontWeight.w700, color: gc.text, letterSpacing: 0.3)),
                   const SizedBox(height: 2),
                   Text(t.templateBlurb(template.id),
                       style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textSecondary, height: 1.35)),
-                  const SizedBox(height: 4),
-                  Text(t.dayCount(template.days.length),
-                      style: AppTheme.f(11, weight: FontWeight.w500, color: gc.textTertiary)),
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: gc.bgRaised,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(t.dayCount(template.days.length),
+                        style: AppTheme.f(10.5, weight: FontWeight.w600, color: gc.brass)),
+                  ),
                 ],
               ),
             ),
             const SizedBox(width: 8),
-            Icon(PhosphorIconsRegular.plus, size: 16, color: gc.textSecondary),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(color: gc.bgRaised, shape: BoxShape.circle),
+              child: Icon(PhosphorIconsRegular.plus, size: 14, color: gc.textSecondary),
+            ),
           ],
         ),
       ),
@@ -305,24 +334,60 @@ class RoutinesScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => _pickRoutine(context, weekday),
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        margin: const EdgeInsets.symmetric(vertical: 2),
+        decoration: BoxDecoration(
+          color: isToday ? gc.ember.withValues(alpha: 0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: isToday
+              ? Border.all(color: gc.ember.withValues(alpha: 0.38), width: 1.1)
+              : null,
+        ),
         child: Row(
           children: [
-            Text(t.weekdayShort(weekday),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: isToday ? gc.ember : gc.bgRaised2,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: isToday
+                    ? [
+                        BoxShadow(
+                          color: gc.ember.withValues(alpha: 0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Text(
+                t.weekdayShort(weekday),
                 maxLines: 1,
                 softWrap: false,
-                style: AppTheme.f(14, weight: FontWeight.w600, color: isToday ? gc.ember : gc.text)),
+                style: AppTheme.f(11.5,
+                    weight: FontWeight.w800,
+                    color: isToday ? gc.onEmber : gc.textSecondary,
+                    letterSpacing: 0.5),
+              ),
+            ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(assigned == null ? t.restDayShort : fit.routineTitle(assigned),
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.f(14, weight: FontWeight.w500, color: assigned != null ? gc.text : gc.textTertiary)),
+              child: Text(
+                assigned == null ? t.restDayShort : fit.routineTitle(assigned),
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.f(13.5,
+                    weight: isToday ? FontWeight.w700 : (assigned != null ? FontWeight.w600 : FontWeight.w500),
+                    color: isToday
+                        ? gc.ember
+                        : (assigned != null ? gc.text : gc.textTertiary)),
+              ),
             ),
             const SizedBox(width: 8),
-            SvgPathIcon(Ic.chevronRight, size: 14, color: gc.textTertiary),
+            SvgPathIcon(Ic.chevronRight, size: 13, color: isToday ? gc.ember : gc.textTertiary),
           ],
         ),
       ),

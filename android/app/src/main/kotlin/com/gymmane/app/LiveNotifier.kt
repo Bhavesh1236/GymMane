@@ -1,5 +1,6 @@
 package com.gymmane.app
 
+import com.gymmane.app.R
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -85,12 +86,12 @@ object LiveNotifier {
             Intent(ctx, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        val b = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val b: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ensureChannel(nm, a)
             Notification.Builder(ctx, CHANNEL)
         } else {
             @Suppress("DEPRECATION")
-            Notification.Builder(ctx).setPriority(Notification.PRIORITY_LOW)
+            Notification.Builder(ctx).also { it.setPriority(Notification.PRIORITY_LOW) }
         }
         b.setSmallIcon(R.drawable.ic_stat_gymmane)
             .setSubText(if (total > 0) "${index + 1}/$total" else null)
@@ -119,11 +120,11 @@ object LiveNotifier {
             b.setContentTitle(name)
             b.setContentText(if (countdown && restLabel.isNotEmpty()) "$restLabel · $detail" else detail)
             b.setShowWhen(false)
-            val (fill, ink) = when {
-                flash != null -> R.color.live_done to R.color.live_on_done
-                paused -> R.color.live_pause to R.color.live_on_pause
-                countdown -> R.color.live_accent to R.color.live_on_accent
-                else -> R.color.live_idle to R.color.live_ink
+            val (fill: Int, ink: Int) = when {
+                flash != null -> Pair(R.color.live_done, R.color.live_on_done)
+                paused -> Pair(R.color.live_pause, R.color.live_on_pause)
+                countdown -> Pair(R.color.live_accent, R.color.live_on_accent)
+                else -> Pair(R.color.live_idle, R.color.live_ink)
             }
             b.setLargeIcon(badge(ctx, flash ?: clock(if (countdown) left else elapsed), ctx.getColor(fill), ctx.getColor(ink)))
             val style = Notification.ProgressStyle()

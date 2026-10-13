@@ -115,51 +115,51 @@ class ProgressScreen extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Container(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
-      decoration: BoxDecoration(color: gc.bgRaised, borderRadius: BorderRadius.circular(22)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Expanded(
-              child: Text(label.toUpperCase(),
+      child: SoftCard(
+        radius: 20,
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Expanded(
+                child: Text(label.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTheme.f(10,
+                        weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 1.1)),
+              ),
+              ?badge,
+            ]),
+            const SizedBox(height: 8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  RollIn(value, style: AppTheme.f(27, weight: FontWeight.w800, color: gc.text)),
+                  if (unit.isNotEmpty) ...[
+                    const SizedBox(width: 4),
+                    Text(unit, style: AppTheme.f(12.5, weight: FontWeight.w600, color: gc.accent)),
+                  ],
+                ],
+              ),
+            ),
+            if (note != null) ...[
+              const SizedBox(height: 3),
+              Text(note,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTheme.f(10,
-                      weight: FontWeight.w600, color: gc.textTertiary, letterSpacing: 0.9)),
-            ),
-            ?badge,
-          ]),
-          const SizedBox(height: 10),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                RollIn(value, style: AppTheme.f(28, weight: FontWeight.w800, color: gc.text)),
-                if (unit.isNotEmpty) ...[
-                  const SizedBox(width: 5),
-                  Text(unit, style: AppTheme.f(13, weight: FontWeight.w500, color: gc.textSecondary)),
-                ],
-              ],
-            ),
-          ),
-          if (note != null) ...[
-            const SizedBox(height: 4),
-            Text(note,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTheme.f(11.5, weight: FontWeight.w500, color: gc.textTertiary)),
+                  style: AppTheme.f(11, weight: FontWeight.w500, color: gc.textTertiary)),
+            ],
+            if (chart != null) ...[
+              const SizedBox(height: 10),
+              chart,
+            ],
           ],
-          if (chart != null) ...[
-            const SizedBox(height: 12),
-            chart,
-          ],
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -192,7 +192,7 @@ class ProgressScreen extends StatelessWidget {
                   : Sparkline(
                       values: [for (final v in fit.volumeChartPoints) fit.toDisplayWeight(v) / 1000],
                       height: 40,
-                      color: gc.textSecondary,
+                      color: gc.accent.withValues(alpha: 0.7),
                       scale: fmt,
                     ),
             ),
@@ -216,7 +216,7 @@ class ProgressScreen extends StatelessWidget {
                         : Sparkline(
                             values: [for (final v in bw) fit.toDisplayWeight(v)],
                             height: 40,
-                            color: gc.textSecondary,
+                            color: gc.accent.withValues(alpha: 0.7),
                             scale: fmt,
                           ),
                     onTap: fit.goBodyComposition,
@@ -228,9 +228,9 @@ class ProgressScreen extends StatelessWidget {
   }
 
   Widget _consistency(BuildContext context, GymColors gc) {
-    return Container(
+    return SoftCard(
+      radius: 22,
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-      decoration: BoxDecoration(color: gc.bgRaised, borderRadius: BorderRadius.circular(22)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -238,7 +238,7 @@ class ProgressScreen extends StatelessWidget {
             children: [
               Text(t.consistency.toUpperCase(),
                   style: AppTheme.f(10,
-                      weight: FontWeight.w600, color: gc.textTertiary, letterSpacing: 0.9)),
+                      weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 1.1)),
               const Spacer(),
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -266,13 +266,25 @@ class ProgressScreen extends StatelessWidget {
           Heatmap(levels: fit.heatmapLevels, onTapDay: (i) => _showDay(context, i)),
           const SizedBox(height: 14),
           Row(children: [
-            Icon(PhosphorIconsFill.fire, size: 14, color: gc.accent),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: gc.accent.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(PhosphorIconsFill.fire, size: 14, color: gc.accent),
+            ),
             const SizedBox(width: 7),
-            Text(t.streakDays(fit.currentStreak),
-                style: AppTheme.f(12.5, weight: FontWeight.w600, color: gc.text)),
-            const Spacer(),
+            Expanded(
+              child: Text(t.streakDays(fit.currentStreak),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTheme.f(12.5, weight: FontWeight.w700, color: gc.text)),
+            ),
+            const SizedBox(width: 8),
             Text(t.weekOfGoal(fit.sessionsThisWeek, fit.weeklyTarget),
-                style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textTertiary)),
+                maxLines: 1,
+                style: AppTheme.f(12, weight: FontWeight.w600, color: gc.textSecondary)),
           ]),
           const SizedBox(height: 12),
           const Divider(height: 1),
@@ -425,41 +437,96 @@ class ProgressScreen extends StatelessWidget {
 
   Widget _setupCard(BuildContext context, GymColors gc) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 8),
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 12),
       decoration: BoxDecoration(
-        color: gc.bgRaised,
+        gradient: LinearGradient(
+          colors: [
+            gc.accent.withValues(alpha: 0.08),
+            gc.bgRaised,
+            gc.bgRaised2,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: gc.border),
+        border: Border.all(color: gc.accent.withValues(alpha: 0.22), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: gc.accent.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(t.setupTitle, style: AppTheme.f(15.5, color: gc.text)),
-          const SizedBox(height: 4),
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [gc.accent, gc.brass]),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(color: gc.accent.withValues(alpha: 0.35), blurRadius: 8),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(PhosphorIconsFill.sparkle, size: 16, color: gc.bg),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(t.setupTitle,
+                    style: AppTheme.f(16, weight: FontWeight.w800, color: gc.text)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
           Text(t.setupHint,
-              style: AppTheme.f(12, weight: FontWeight.w500, color: gc.textTertiary, height: 1.4)),
+              style: AppTheme.f(12.5, weight: FontWeight.w500, color: gc.textSecondary, height: 1.4)),
           const SizedBox(height: 14),
           for (final step in _steps())
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: step.done ? null : () => _goStep(context, step.route),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 13),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                decoration: BoxDecoration(
+                  color: step.done
+                      ? gc.sage.withValues(alpha: 0.08)
+                      : gc.bg.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: step.done
+                        ? gc.sage.withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.06),
+                    width: 1,
+                  ),
+                ),
                 child: Row(children: [
                   Icon(
                     step.done ? PhosphorIconsFill.checkCircle : PhosphorIconsRegular.circleDashed,
-                    size: 17,
-                    color: step.done ? gc.sage : gc.textTertiary,
+                    size: 18,
+                    color: step.done ? gc.sage : gc.accent,
                   ),
-                  const SizedBox(width: 11),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(step.label,
-                        style: AppTheme.f(13,
-                            weight: FontWeight.w500,
+                        style: AppTheme.f(13.2,
+                            weight: step.done ? FontWeight.w500 : FontWeight.w600,
                             color: step.done ? gc.textTertiary : gc.text)),
                   ),
                   if (!step.done)
-                    Icon(PhosphorIconsBold.caretRight, size: 13, color: gc.textTertiary),
+                    Icon(PhosphorIconsBold.caretRight, size: 14, color: gc.accent),
                 ]),
               ),
             ),

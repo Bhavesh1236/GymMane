@@ -14,7 +14,7 @@ class GymManeApp extends StatelessWidget {
     return AnimatedBuilder(
       animation: fit,
       builder: (context, _) => MaterialApp(
-        title: 'GymMane',
+        title: 'Gym AI',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,

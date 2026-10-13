@@ -148,27 +148,28 @@ class StatsWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final compact = size.width <= 160 || size.height <= 160;
     return Container(
       width: size.width,
       height: size.height,
-      padding: const EdgeInsets.all(16),
-      decoration: _card(gc, framed, 24),
+      padding: EdgeInsets.all(compact ? 10 : 16),
+      decoration: _card(gc, framed, compact ? 16 : 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.local_fire_department_rounded, size: 16, color: gc.accent),
+              Icon(Icons.local_fire_department_rounded, size: compact ? 13 : 16, color: gc.accent),
               const SizedBox(width: 4),
               Text(titleCase(t.streakCaps),
                   style: TextStyle(
                       fontFamily: _kDisplay,
-                      fontSize: 14,
+                      fontSize: compact ? 12 : 14,
                       fontWeight: FontWeight.w800,
                       color: gc.text)),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: compact ? 4 : 14),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
@@ -179,7 +180,7 @@ class StatsWidgetView extends StatelessWidget {
                 Text('$streak',
                     style: TextStyle(
                         fontFamily: _kDisplay,
-                        fontSize: 46,
+                        fontSize: compact ? 34 : 46,
                         height: 1,
                         fontWeight: FontWeight.w700,
                         color: gc.text)),
@@ -187,7 +188,7 @@ class StatsWidgetView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(t.daysUnit(streak),
-                      style: TextStyle(fontFamily: _kBody, fontSize: 14, color: gc.textSecondary)),
+                      style: TextStyle(fontFamily: _kBody, fontSize: compact ? 11 : 14, color: gc.textSecondary)),
                 ),
               ],
             ),
@@ -195,9 +196,9 @@ class StatsWidgetView extends StatelessWidget {
           const Spacer(),
           Row(
             children: [
-              _chip(gc, '$sessionsThisWeek', t.thisWeek),
-              const SizedBox(width: 10),
-              _chip(gc, '$goalPct%', t.goal),
+              _chip(gc, '$sessionsThisWeek', t.thisWeek, compact: compact),
+              SizedBox(width: compact ? 6 : 10),
+              _chip(gc, '$goalPct%', t.goal, compact: compact),
             ],
           ),
         ],
@@ -205,11 +206,11 @@ class StatsWidgetView extends StatelessWidget {
     );
   }
 
-  Widget _chip(GymColors gc, String value, String label) {
+  Widget _chip(GymColors gc, String value, String label, {bool compact = false}) {
     return Expanded(
       child: Container(
-        height: 44,
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 9),
+        height: compact ? 38 : 48,
+        padding: EdgeInsets.symmetric(vertical: compact ? 2 : 4, horizontal: compact ? 6 : 8),
         decoration: BoxDecoration(
           color: gc.bgRaised2,
           borderRadius: BorderRadius.circular(12),
@@ -221,8 +222,8 @@ class StatsWidgetView extends StatelessWidget {
             Text(value,
                 maxLines: 1,
                 style: TextStyle(
-                    fontFamily: _kDisplay, fontSize: 16, fontWeight: FontWeight.w700, color: gc.text)),
-            const SizedBox(height: 1),
+                    fontFamily: _kDisplay, fontSize: compact ? 13 : 16, fontWeight: FontWeight.w700, color: gc.text)),
+            SizedBox(height: compact ? 0 : 1),
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,

@@ -34,6 +34,7 @@ import '../screens/tool_detail_screen.dart';
 import '../screens/tools_screen.dart';
 import '../screens/train_screen.dart';
 import '../screens/veo_animate_screen.dart';
+import '../screens/smart_ai_coach_screen.dart';
 import '../services/incoming_share.dart';
 import '../state/fit_state.dart';
 import '../theme/app_colors.dart';
@@ -44,6 +45,7 @@ import '../widgets/dialogs.dart';
 import '../widgets/glass.dart';
 import '../widgets/liquid_notch.dart';
 import '../widgets/start_countdown.dart';
+import '../widgets/ui_kit.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -67,6 +69,7 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
     'tools',
     'tools-detail',
     'veo-animate',
+    'smart-ai-coach',
   };
 
   static const _firstAwardWait = Duration(milliseconds: 4000);
@@ -247,13 +250,13 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    child: EdgeBlur(top: false, height: 128 + MediaQuery.viewPaddingOf(context).bottom),
+                    child: EdgeBlur(top: false, height: 136 + MediaQuery.viewPaddingOf(context).bottom),
                   ),
                 if (fit.showNav && MediaQuery.viewInsetsOf(context).bottom < 60)
                   Positioned(
-                    left: 18,
-                    right: 18,
-                    bottom: 18 + MediaQuery.viewPaddingOf(context).bottom,
+                    left: 10,
+                    right: 10,
+                    bottom: 12 + MediaQuery.viewPaddingOf(context).bottom,
                     child: Directionality(textDirection: TextDirection.ltr, child: _NavBar()),
                   ),
                 if (fit.countdownUntil != null && fit.session != null)
@@ -389,6 +392,8 @@ class _AppShellState extends State<AppShell> with WidgetsBindingObserver {
         return NotesScreen();
       case 'note-edit':
         return NoteEditScreen(key: ValueKey(fit.editingNoteId ?? 'new'));
+      case 'smart-ai-coach':
+        return const SmartAiCoachScreen();
       case 'home':
       default:
         return HomeScreen();
@@ -424,14 +429,13 @@ class _NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<_NavBar> {
-  static const _iw = 58.0;
   static const _fabW = 54.0;
   static const _routes = ['home', 'progress', 'exercises', 'settings'];
 
   double? _dragX;
   int? _hover;
   double _slotW = 0;
-  double _gap = 0;
+  double _iw = 72.0;
 
   int get _selectedIndex {
     if (_hover != null) return _hover!;
@@ -439,12 +443,7 @@ class _NavBarState extends State<_NavBar> {
     return i < 0 ? 0 : i;
   }
 
-  double _slotX(int i) => switch (i) {
-        0 => 0,
-        1 => _iw + _gap,
-        2 => 2 * _iw + 3 * _gap + _fabW,
-        _ => 3 * _iw + 4 * _gap + _fabW,
-      };
+  double _slotX(int i) => i < 2 ? i * _iw : i * _iw + _fabW;
 
   void _go(int i) => [fit.goHome, fit.goProgress, fit.goExercises, fit.goSettings][i]();
 
@@ -479,11 +478,11 @@ class _NavBarState extends State<_NavBar> {
     final gc = context.gc;
 
     return SizedBox(
-      height: 74,
+      height: 80,
       child: LayoutBuilder(
         builder: (context, c) {
-          _slotW = c.maxWidth - 16;
-          _gap = ((_slotW - 4 * _iw - _fabW) / 4).clamp(0.0, 40.0);
+          _slotW = c.maxWidth - 12;
+          _iw = (_slotW - _fabW) / 4;
           final drag = _dragX;
 
           return Stack(
@@ -492,35 +491,48 @@ class _NavBarState extends State<_NavBar> {
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(32),
                     boxShadow: [
-                      BoxShadow(color: const Color(0x4D000000), blurRadius: 32, offset: const Offset(0, 12)),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        blurRadius: 36,
+                        offset: const Offset(0, 14),
+                      ),
+                      BoxShadow(
+                        color: gc.accent.withValues(alpha: 0.12),
+                        blurRadius: 28,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  child: const GlassSurface(radius: 28, blur: 16, child: SizedBox.expand()),
+                  child: const GlassSurface(
+                    radius: 32,
+                    blur: 24,
+                    child: SizedBox.expand(),
+                  ),
                 ),
               ),
               Positioned(
-                left: 8,
-                right: 8,
+                left: 6,
+                right: 6,
                 top: 0,
                 bottom: 0,
                 child: _LiquidPill(
-                  left: _slotX(_selectedIndex),
-                  dragLeft: drag == null ? null : drag - _iw / 2,
-                  width: _iw,
-                  color: gc.text.withValues(alpha: fit.dark ? 0.1 : 0.07),
+                  left: _slotX(_selectedIndex) + 10,
+                  dragLeft: drag == null ? null : drag - (_iw - 20) / 2,
+                  width: _iw - 20,
+                  color: gc.accent,
                 ),
               ),
               Positioned(
-                left: 8,
-                right: 8,
+                left: 6,
+                right: 6,
                 top: 0,
                 bottom: 0,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onHorizontalDragStart: (d) {
-                    final fab = 2 * _iw + 2 * _gap + _fabW / 2;
+                    final fab = 2 * _iw + _fabW / 2;
                     if ((d.localPosition.dx - fab).abs() < _fabW / 2 + 4) return;
                     HapticFeedback.selectionClick();
                     _dragTo(d.localPosition.dx);
@@ -535,16 +547,23 @@ class _NavBarState extends State<_NavBar> {
                     if (_dragX != null) _dragEnd();
                   },
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _item(context, 0, PhosphorIconsRegular.house, PhosphorIconsFill.house, t.home, fit.goHome),
-                      _item(context, 1, PhosphorIconsRegular.chartLineUp, PhosphorIconsFill.chartLineUp, t.progress,
-                          fit.goProgress),
+                      Expanded(
+                        child: _item(context, 0, PhosphorIconsRegular.house, PhosphorIconsFill.house, t.home, fit.goHome),
+                      ),
+                      Expanded(
+                        child: _item(context, 1, PhosphorIconsRegular.chartLineUp, PhosphorIconsFill.chartLineUp, t.progress,
+                            fit.goProgress),
+                      ),
                       _fab(context),
-                      _item(context, 2, PhosphorIconsRegular.barbell, PhosphorIconsFill.barbell, t.exercises,
-                          fit.goExercises),
-                      _item(context, 3, PhosphorIconsRegular.userCircle, PhosphorIconsFill.userCircle, t.profile,
-                          fit.goSettings),
+                      Expanded(
+                        child: _item(context, 2, PhosphorIconsRegular.barbell, PhosphorIconsFill.barbell, t.exercises,
+                            fit.goExercises),
+                      ),
+                      Expanded(
+                        child: _item(context, 3, PhosphorIconsRegular.userCircle, PhosphorIconsFill.userCircle, t.profile,
+                            fit.goSettings),
+                      ),
                     ],
                   ),
                 ),
@@ -560,8 +579,8 @@ class _NavBarState extends State<_NavBar> {
     final gc = context.gc;
     final selected = _selectedIndex == index;
     final lifted = selected && _dragX != null;
-    final color = selected ? gc.text : gc.textTertiary;
-    const dur = Duration(milliseconds: 300);
+    final color = selected ? gc.accent : gc.textTertiary;
+    const dur = Duration(milliseconds: 240);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -576,40 +595,79 @@ class _NavBarState extends State<_NavBar> {
         if (_dragX != null) _dragEnd();
       },
       child: AnimatedScale(
-        scale: lifted ? 1.06 : 1,
-        duration: const Duration(milliseconds: 220),
+        scale: lifted ? 1.08 : 1.0,
+        duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
         child: SizedBox(
-        width: _iw,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: selected ? 1 : 0, end: selected ? 1 : 0),
-              duration: dur,
-              curve: Curves.easeOut,
-              builder: (context, t, _) => Icon(
-                selected ? iconFill : icon,
-                size: 22,
-                color: Color.lerp(gc.textTertiary, gc.text, t),
-              ),
-            ),
-            const SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: AnimatedDefaultTextStyle(
-                  duration: dur,
-                  curve: Curves.easeOut,
-                  style: AppTheme.s(9.5, weight: FontWeight.w600, color: color, letterSpacing: 0.2),
-                  child: Text(label, maxLines: 1, softWrap: false),
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: selected ? 1.0 : 0.0, end: selected ? 1.0 : 0.0),
+                duration: dur,
+                curve: Curves.easeOutCubic,
+                builder: (context, t, _) => Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: selected
+                        ? [
+                            BoxShadow(
+                              color: gc.accent.withValues(alpha: 0.35 * t),
+                              blurRadius: 10,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Icon(
+                    selected ? iconFill : icon,
+                    size: selected ? 23.5 : 22.0,
+                    color: Color.lerp(gc.textTertiary, gc.accent, t),
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 1.5),
+              AnimatedDefaultTextStyle(
+                duration: dur,
+                curve: Curves.easeOutCubic,
+                style: AppTheme.f(
+                  selected ? 11.2 : 10.5,
+                  weight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: color,
+                  letterSpacing: selected ? 0.1 : 0.0,
+                ),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.visible,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 2),
+              AnimatedContainer(
+                duration: dur,
+                curve: Curves.easeOutCubic,
+                width: selected ? 14 : 0,
+                height: 2.2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [gc.accent, gc.brass]),
+                  borderRadius: BorderRadius.circular(100),
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: gc.accent.withValues(alpha: 0.8),
+                            blurRadius: 5,
+                          ),
+                        ]
+                      : null,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -625,12 +683,13 @@ class _NavBarState extends State<_NavBar> {
 
   Widget _fab(BuildContext context) {
     final gc = context.gc;
-    return GestureDetector(
+    return Pressable(
       onTap: () => _play(context),
       onLongPress: () => showStartSheet(context),
+      scale: 0.92,
       child: Container(
-        width: 54,
-        height: 54,
+        width: 58,
+        height: 58,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -639,10 +698,32 @@ class _NavBarState extends State<_NavBar> {
           ),
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: gc.accent.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 6)),
+            BoxShadow(
+              color: gc.accent.withValues(alpha: 0.55),
+              blurRadius: 22,
+              offset: const Offset(0, 6),
+            ),
+            BoxShadow(
+              color: gc.brass.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
-        child: Icon(PhosphorIconsFill.play, size: 24, color: gc.bg),
+        child: Center(
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1.2,
+              ),
+            ),
+            child: Icon(PhosphorIconsFill.play, size: 25, color: gc.bg),
+          ),
+        ),
       ),
     );
   }
@@ -697,6 +778,7 @@ class _LiquidPillState extends State<_LiquidPill> with TickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedBuilder(
       animation: Listenable.merge([_move, _lift]),
       builder: (context, _) {
@@ -708,7 +790,7 @@ class _LiquidPillState extends State<_LiquidPill> with TickerProviderStateMixin 
           l = drag;
           r = drag + widget.width;
         } else {
-          final t = _move.value;
+          final t = _move.value.clamp(0.0, 1.0);
           final to = widget.left;
           final right = to >= _from;
           final lead = Curves.easeOutCubic.transform(t);
@@ -718,9 +800,8 @@ class _LiquidPillState extends State<_LiquidPill> with TickerProviderStateMixin 
           squash = 1 - 0.14 * (1 - (2 * t - 1).abs()) * (to == _from ? 0 : 1);
         }
         _shown = l;
-        final base = Color.lerp(widget.color, widget.color.withValues(alpha: (widget.color.a * 2.4).clamp(0.0, 1.0)), lift)!;
-        final grow = 6 * lift;
-        final inset = 10 + 12 * (1 - squash) - 6 * lift;
+        final grow = 4 * lift;
+        final inset = 12 + 6 * (1 - squash) - 4 * lift;
         return Stack(
           clipBehavior: Clip.none,
           children: [
@@ -731,19 +812,32 @@ class _LiquidPillState extends State<_LiquidPill> with TickerProviderStateMixin 
               bottom: inset,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.16 * lift), width: 1),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: lift > 0 ? 0.22 : (dark ? 0.1 : 0.25)),
+                    width: 0.8,
+                  ),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color.alphaBlend(Colors.white.withValues(alpha: 0.12 * lift), base),
-                      base,
+                      widget.color.withValues(alpha: dark ? 0.2 : 0.14),
+                      widget.color.withValues(alpha: dark ? 0.06 : 0.03),
                     ],
                   ),
-                  boxShadow: lift <= 0
-                      ? null
-                      : [BoxShadow(color: Colors.black.withValues(alpha: 0.28 * lift), blurRadius: 22, offset: const Offset(0, 8))],
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.color.withValues(alpha: dark ? 0.12 : 0.06),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                    if (lift > 0)
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25 * lift),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                  ],
                 ),
               ),
             ),

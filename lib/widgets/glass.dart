@@ -241,6 +241,7 @@ class GlassSurface extends StatelessWidget {
     this.blur = 22,
     this.tint,
     this.padding,
+    this.borderGradient,
   });
 
   final Widget child;
@@ -248,6 +249,7 @@ class GlassSurface extends StatelessWidget {
   final double blur;
   final Color? tint;
   final EdgeInsetsGeometry? padding;
+  final Gradient? borderGradient;
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +263,11 @@ class GlassSurface extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: shape,
-            color: tint ?? gc.bgRaised.withValues(alpha: dark ? 0.66 : 0.74),
+            color: tint ?? gc.bgRaised.withValues(alpha: dark ? 0.62 : 0.74),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: dark ? 0.08 : 0.4),
+              width: 0.8,
+            ),
           ),
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -270,12 +276,12 @@ class GlassSurface extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withValues(alpha: dark ? 0.07 : 0.3),
-                  Colors.white.withValues(alpha: 0),
+                  Colors.white.withValues(alpha: dark ? 0.08 : 0.28),
+                  Colors.white.withValues(alpha: 0.01),
+                  Colors.black.withValues(alpha: dark ? 0.12 : 0.0),
                 ],
-                stops: const [0, 0.6],
+                stops: const [0, 0.45, 1],
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: dark ? 0.08 : 0.5), width: 0.8),
             ),
             child: padding == null ? child : Padding(padding: padding!, child: child),
           ),

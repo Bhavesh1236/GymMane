@@ -27,23 +27,49 @@ class ToolDetailScreen extends StatelessWidget {
           children: [
             ScreenHeader(title: meta.$1, onBack: fit.closeTool, titleSize: 21),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
-              decoration: BoxDecoration(
-                color: gc.bgRaised,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(children: [
-                Text(t.result.toUpperCase(),
-                    style: AppTheme.f(10.5,
-                        weight: FontWeight.w700, color: gc.textTertiary, letterSpacing: 1.6)),
-                const SizedBox(height: 8),
-                Text(meta.$2,
-                    textAlign: TextAlign.center,
-                    style: AppTheme.f(40, weight: FontWeight.w800, color: gc.text)),
-                const SizedBox(height: 8),
-                Text(meta.$3, style: AppTheme.f(13, weight: FontWeight.w500, color: gc.textSecondary), textAlign: TextAlign.center),
-              ]),
+            Builder(
+              builder: (context) {
+                final accentColor = switch (id) {
+                  'rm' => gc.ember,
+                  'bmi' => const Color(0xFF38BDF8),
+                  'cal' => const Color(0xFFFB923C),
+                  'bf' => const Color(0xFFA855F7),
+                  'plate' => gc.brass,
+                  'warmup' => const Color(0xFF2DD4BF),
+                  _ => gc.accent,
+                };
+                return SoftCard(
+                  radius: 24,
+                  padding: const EdgeInsets.fromLTRB(22, 26, 22, 26),
+                  borderColor: accentColor.withValues(alpha: 0.28),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      gc.bgRaised,
+                      accentColor.withValues(alpha: 0.08),
+                    ],
+                  ),
+                  child: Column(children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(t.result.toUpperCase(),
+                          style: AppTheme.f(10.5,
+                              weight: FontWeight.w800, color: accentColor, letterSpacing: 1.5)),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(meta.$2,
+                        textAlign: TextAlign.center,
+                        style: AppTheme.f(40, weight: FontWeight.w800, color: gc.text, height: 1.1)),
+                    const SizedBox(height: 8),
+                    Text(meta.$3, style: AppTheme.f(13, weight: FontWeight.w500, color: gc.textSecondary), textAlign: TextAlign.center),
+                  ]),
+                );
+              },
             ),
             const SizedBox(height: 18),
             ..._grouped(_inputs(context, gc, id)),
@@ -104,6 +130,15 @@ class ToolDetailScreen extends StatelessWidget {
     switch (id) {
       case 'rm':
         return [
+          ToolRow(
+            label: 'Formula',
+            control: SegToggle([
+              SegOption('Epley', fit.rmFormula == 'epley', () => fit.setRmFormula('epley')),
+              SegOption('Brzycki', fit.rmFormula == 'brzycki', () => fit.setRmFormula('brzycki')),
+              SegOption('Lombardi', fit.rmFormula == 'lombardi', () => fit.setRmFormula('lombardi')),
+            ]),
+          ),
+          const SizedBox(height: 10),
           ToolRow(label: t.weightLifted, control: StepperControl(value: '${fit.weightValue(fit.rmWeight)} ${fit.units}', onDec: () => fit.bumpRmWeight(-fit.fromDisplayWeight(fit.weightStep)), onInc: () => fit.bumpRmWeight(fit.fromDisplayWeight(fit.weightStep)), onEdit: () => _editNumber(context, title: t.weightLifted, current: fit.toDisplayWeight(fit.rmWeight), decimal: true, apply: (v) => fit.bumpRmWeight(fit.fromDisplayWeight(v) - fit.rmWeight)))),
           const SizedBox(height: 10),
           ToolRow(label: t.repsPerformed, control: StepperControl(value: '${fit.rmReps}', minWidth: 40, onDec: () => fit.bumpRmReps(-1), onInc: () => fit.bumpRmReps(1), onEdit: () => _editNumber(context, title: t.repsPerformed, current: fit.rmReps.toDouble(), decimal: false, apply: (v) => fit.bumpRmReps(v.round() - fit.rmReps)))),

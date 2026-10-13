@@ -179,25 +179,25 @@ abstract class AppLocalizations {
   /// No description provided for @home.
   ///
   /// In en, this message translates to:
-  /// **'HOME'**
+  /// **'Home'**
   String get home;
 
   /// No description provided for @progress.
   ///
   /// In en, this message translates to:
-  /// **'PROGRESS'**
+  /// **'Progress'**
   String get progress;
 
   /// No description provided for @exercises.
   ///
   /// In en, this message translates to:
-  /// **'EXERCISES'**
+  /// **'Exercises'**
   String get exercises;
 
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
-  /// **'SETTINGS'**
+  /// **'Settings'**
   String get settings;
 
   /// No description provided for @today.

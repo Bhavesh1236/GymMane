@@ -16,7 +16,9 @@ class SoftCard extends StatelessWidget {
     this.radius = 20,
     this.borderColor,
     this.color,
+    this.gradient,
     this.clip = false,
+    this.shadow,
   });
 
   final Widget child;
@@ -24,18 +26,46 @@ class SoftCard extends StatelessWidget {
   final double radius;
   final Color? borderColor;
   final Color? color;
+  final Gradient? gradient;
   final bool clip;
+  final List<BoxShadow>? shadow;
 
   @override
   Widget build(BuildContext context) {
     final gc = context.gc;
+    final dark = gc.bg.computeLuminance() < 0.5;
+    final baseColor = color ?? gc.bgRaised;
     return Container(
       padding: padding,
       clipBehavior: clip ? Clip.antiAlias : Clip.none,
       decoration: BoxDecoration(
-        color: color ?? gc.bgRaised,
-        border: Border.all(color: borderColor ?? gc.border),
+        color: gradient == null && color != null ? baseColor : (gradient == null && !dark ? baseColor : null),
+        gradient: gradient ??
+            (color == null && dark
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      gc.bgRaised.withValues(alpha: 0.92),
+                      gc.bgRaised2.withValues(alpha: 0.72),
+                    ],
+                  )
+                : null),
+        border: Border.all(
+          color: borderColor ?? (dark ? Colors.white.withValues(alpha: 0.08) : gc.border),
+          width: 0.9,
+        ),
         borderRadius: BorderRadius.circular(radius),
+        boxShadow: shadow ??
+            (dark
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.24),
+                      blurRadius: 18,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null),
       ),
       child: child,
     );
@@ -750,6 +780,7 @@ class PrimaryButton extends StatelessWidget {
     this.fg,
     this.height = 56,
     this.icon,
+    this.gradient,
   });
   final String label;
   final VoidCallback onTap;
@@ -757,17 +788,37 @@ class PrimaryButton extends StatelessWidget {
   final Color? fg;
   final double height;
   final List<IconPath>? icon;
+  final Gradient? gradient;
 
   @override
   Widget build(BuildContext context) {
     final gc = context.gc;
     final f = fg ?? gc.onEmber;
+    final hasCustomBg = bg != null;
     return Pressable(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         height: height,
-        decoration: BoxDecoration(color: bg ?? gc.ember, borderRadius: BorderRadius.circular(100)),
+        decoration: BoxDecoration(
+          color: hasCustomBg ? bg : null,
+          gradient: gradient ??
+              (hasCustomBg
+                  ? null
+                  : LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [gc.accent, gc.brass],
+                    )),
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: [
+            BoxShadow(
+              color: (bg ?? gc.accent).withValues(alpha: 0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -781,7 +832,7 @@ class PrimaryButton extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(titleCase(label),
                     maxLines: 1,
-                    style: AppTheme.f(15.5, weight: FontWeight.w700, color: f, letterSpacing: 0.2)),
+                    style: AppTheme.f(15.5, weight: FontWeight.w800, color: f, letterSpacing: 0.2)),
               ),
             ),
           ],

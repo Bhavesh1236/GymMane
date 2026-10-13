@@ -360,7 +360,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: onTap,
       child: Container(
         height: 168,
-        decoration: BoxDecoration(color: gc.bgRaised, borderRadius: BorderRadius.circular(22)),
+        decoration: BoxDecoration(
+          color: gc.bgRaised,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.08),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
         child: Column(
           children: [
             Expanded(child: Center(child: child)),
@@ -369,11 +383,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(label, style: AppTheme.f(14.5, color: gc.text)),
+                  Text(label, style: AppTheme.f(14.5, weight: FontWeight.w700, color: gc.text)),
                   if (trailing != null) ...[
                     const SizedBox(width: 7),
-                    Text(trailing,
-                        style: AppTheme.f(13, weight: FontWeight.w600, color: gc.textTertiary)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: gc.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(trailing,
+                          style: AppTheme.f(12, weight: FontWeight.w700, color: gc.accent)),
+                    ),
                   ],
                 ],
               ),

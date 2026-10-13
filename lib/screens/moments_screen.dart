@@ -269,7 +269,7 @@ class _PhotoView extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, _) {
-        final v = Curves.easeOutCubic.transform(animation.value);
+        final v = Curves.easeOutCubic.transform(animation.value.clamp(0.0, 1.0));
         return Material(
           type: MaterialType.transparency,
           child: GestureDetector(
